@@ -1,0 +1,53 @@
+vs code shortcut
+
+alt up/down - move line up/down
+alt z - toggle word wrap
+alt x - toggle line wrap
+alt f4 - close window
+ctrl d - select word
+ctrl x - cut line (empty selection)
+ctrl c - copy line (empty selection)
+ctrl shift k - delete line
+ctrl t - new tab
+ctrl w - close tab
+ctrl , - open settings
+ctrl / - shortcut
+ctrl a - select all
+ctrl z - undo
+ctrl y - redo
+ctrl p - go to file
+ctrl f - find
+ctrl h - find replace
+ctrl g - goto line
+ctrl n - new file
+ctrl o - open file
+ctrl s - save
+ctrl + - zoom in
+ctrl - - zoom out
+ctrl 0 - reset zoom
+ctrl k t - switch theme
+ctrl tab - next tab
+ctrl shift t - new window
+ctrl shift tab - previous tab
+ctrl shift s - save as
+ctrl shift t - open last closed tab
+shift alt up/down - copy line up/down
+
+menu
+new file
+open file
+save
+  save
+  save as
+  save all
+edit
+  select all
+  undo
+  paste
+  find
+  find & replace
+  toggle line wrap
+  toggle line number
+  goto line
+print
+settings
