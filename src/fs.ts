@@ -1,8 +1,8 @@
 import { open, save } from '@tauri-apps/api/dialog';
 import { exists, readTextFile, renameFile, writeTextFile } from '@tauri-apps/api/fs';
 import { basename } from '@tauri-apps/api/path';
-import { useNoteStore } from './store/useNoteStore';
-import { useSharedStore } from './store/useSharedStore';
+import { useNoteStore } from './stores/useNoteStore';
+import { useSharedStore } from './stores/useSharedStore';
 
 const { debug } = console
 

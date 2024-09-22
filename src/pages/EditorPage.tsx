@@ -1,9 +1,8 @@
 import { appWindow } from "@tauri-apps/api/window";
 import { X } from "lucide-react";
 import * as monaco from "monaco-editor";
-import { useEffect, useMemo, useRef, useState } from "react";
-// import GLOBAL_KEYBOARD_SHORTCUTS from "./constants/GLOBAL_SHORTCUTS";
-import { saveAsFile } from "./fs";
+import { useEffect, useMemo, useRef } from "react";
+import { saveAsFile } from "../fs";
 import {
   closeActiveTab,
   createNewTab,
@@ -14,62 +13,44 @@ import {
   toggleLineWrap,
   toggleTabs,
   updateWindowTitle,
-} from "./keyShortcuts";
-import { debug } from "./lib/console";
-import { useNoteStore } from "./stores/useNoteStore";
-import { useSharedStore } from "./stores/useSharedStore";
+} from "../keyShortcuts";
+import { debug } from "../lib/console";
+import { useNoteStore } from "../stores/useNoteStore";
+import { useSettingStore } from "../stores/useSettingStore";
+import { useSharedStore } from "../stores/useSharedStore";
+import { useFileSystem } from "../stores/useFileSystem";
 
-appWindow.onFileDropEvent((e) => {
-  console.log(e);
-});
-
-// async function bindGlobalKeyboardShortcuts() {
-//   for (let { shortcut, handler } of GLOBAL_KEYBOARD_SHORTCUTS) {
-//     if (await globalShortcut.isRegistered(shortcut)) {
-//       await globalShortcut.unregister(shortcut);
-//     }
-//     await globalShortcut.register(shortcut, handler);
-//   }
-// }
-// globalShortcut.unregisterAll();
-// bindGlobalKeyboardShortcuts();
-
-function App() {
-  const zenMode = useSharedStore((state) => state.showTabs);
-  const { toggleAlwayOnTop } = useSharedStore();
-  const [checked, setChecked] = useState(false);
-
-  function handleKeyDown(e: KeyboardEvent) {
-    console.log(e);
-  }
-
-  // debug(useFileSystem.getState().autoSaveFileDir);
-  // debug(fs.Dir.);
-
+export function Editor() {
+  const zenMode = useSettingStore((state) => state.zenMode);
   return (
-    <div
-      className="flex flex-col w-screen h-screen bg-zinc-800 transition-all text-slate-200"
-      // onKeyDown={handleKeyDown}
-    >
+    <>
       {zenMode && <Header />}
-      <div className="flex-1">
-        <NotepadEditor />
-      </div>
+      <NotepadEditor />
       {zenMode && <Footer />}
-    </div>
+    </>
   );
 }
 
 function NotepadEditor() {
+  // const {
+  //   activeNoteId,
+  //   showLineNumber,
+  //   wordWrap,
+  //   showTabs,
+  //   showFooter,
+  //   updateCursorPosition,
+  //   toggleAlwayOnTop,
+  // } = useSharedStore();
   const {
-    activeNoteId,
+    zenMode,
     showLineNumber,
     wordWrap,
-    showTabs,
-    showFooter,
-    updateCursorPosition,
-    toggleAlwayOnTop,
-  } = useSharedStore();
+    toggleAlwaysOnTop,
+    toggleLineNumber,
+    toggleWordWrap,
+    toggleZenMode,
+  } = useSettingStore();
+  const { updateCursorPosition } = useFileSystem();
   const { getNoteById } = useNoteStore();
 
   const editorRef = useRef<HTMLDivElement>(null);
@@ -92,7 +73,7 @@ function NotepadEditor() {
           enabled: false,
         },
         theme: "vs-dark",
-        wordWrap,
+        wordWrap: wordWrap ? "on" : "off",
         wrappingStrategy: "advanced",
         stickyScroll: {
           enabled: false,
@@ -197,7 +178,7 @@ function NotepadEditor() {
     // ? "on" : "off",
   }, [wordWrap]);
 
-  useEffect(() => {
+  function handleEditorRerender() {
     monacoInstance.current?.layout(
       {
         height: 100,
@@ -205,19 +186,11 @@ function NotepadEditor() {
       },
       true
     );
-  }, [showTabs, showFooter]);
+  }
+  useEffect(handleEditorRerender, [zenMode]);
+  appWindow.onResized(handleEditorRerender);
 
-  appWindow.onResized(() => {
-    monacoInstance.current?.layout(
-      {
-        height: 100,
-        width: 100,
-      },
-      true
-    );
-  });
-
-  return <div ref={editorRef} className="min-h-full min-w-full" />;
+  return <div ref={editorRef} className="min-h-full min-w-full flex-1" />;
 }
 
 function Header() {
@@ -238,6 +211,30 @@ function Header() {
         ))}
       </div>
     </div>
+  );
+}
+
+type TabProps = {
+  name: string;
+  active: boolean;
+  saved: boolean;
+  onClick: () => void;
+  onClose: () => void;
+};
+function Tab({ name, active, saved, onClick, onClose }: TabProps) {
+  return (
+    <span
+      className={`flex font-medium hover:bg-zinc-700 justify-between items-center px-2 text-slate-200 text-sm group cursor-pointer transition-all duration-500 select-none min-w-20 ${
+        active && "bg-zinc-700"
+      }`}
+      onClick={onClick}
+    >
+      <span className="overflow-hidden text-clip text-xs whitespace-nowrap py-1.5">
+        {name}
+        {!saved && "*"}
+      </span>
+      <X className="text-slate-300 hidden group-hover:flex" onClick={onClose} />
+    </span>
   );
 }
 
@@ -284,32 +281,6 @@ function Footer() {
         <BottomTab name={`theme: light`} />
       </div>
     </div>
-  );
-}
-
-export default App;
-
-type TabProps = {
-  name: string;
-  active: boolean;
-  saved: boolean;
-  onClick: () => void;
-  onClose: () => void;
-};
-function Tab({ name, active, saved, onClick, onClose }: TabProps) {
-  return (
-    <span
-      className={`flex font-medium hover:bg-zinc-700 justify-between items-center px-2 text-slate-200 text-sm group cursor-pointer transition-all duration-500 select-none min-w-20 ${
-        active && "bg-zinc-700"
-      }`}
-      onClick={onClick}
-    >
-      <span className="overflow-hidden text-clip text-xs whitespace-nowrap py-1.5">
-        {name}
-        {!saved && "*"}
-      </span>
-      <X className="text-slate-300 hidden group-hover:flex" onClick={onClose} />
-    </span>
   );
 }
 

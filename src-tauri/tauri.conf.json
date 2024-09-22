@@ -16,6 +16,7 @@
         "writeText": true
       },
       "window": {
+        "create": true,
         "setTitle": true,
         "setAlwaysOnTop": true,
         "setFullscreen": true
