@@ -12,13 +12,15 @@ export function Checkbox({ checked, label, onChange }: CheckboxProps) {
         className="flex gap-1 items-center cursor-pointer"
         onClick={onChange}
       >
-        {checked ? (
-          <div className="border w-4 h-4 rounded bg-blue-500 border-blue-500 justify-center items-center aspect-square">
-            <Check className="w-3.5 -translate-y-1" />
-          </div>
-        ) : (
-          <div className="border w-4 h-4 rounded bg-transparent justify-center items-center aspect-square"></div>
-        )}
+        <div
+          className={`border w-4 h-4 rounded-sm ${
+            checked ? "bg-current" : "bg-transparent"
+          } border-current flex justify-center items-center aspect-square`}
+        >
+          {checked && (
+            <Check className="w-3.5 aspect-square text-white dark:text-black" />
+          )}
+        </div>
         <span>{label}</span>
       </div>
     </div>

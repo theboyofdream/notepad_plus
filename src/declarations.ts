@@ -1,4 +1,6 @@
-type fn<T = void, P = never> = (params: P) => T
+// type vfn = () => void
+
+type fn<T = void, P = never> = (params: P) => T | void
 
 type IFile = {
   id: string
@@ -8,3 +10,6 @@ type IFile = {
   path: string
   saved: boolean
 }
+
+
+type theme = 'vs-dark' | 'vs-light'

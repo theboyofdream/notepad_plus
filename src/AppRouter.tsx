@@ -1,10 +1,10 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { useEffect } from "react";
 import "./App.css";
-import { GLOBAL_KEYBOARD_SHORTCUTS } from "./constants/keyboard-shortcuts";
+// import { GLOBAL_KEYBOARD_SHORTCUTS } from "./constants/keyboard-shortcuts";
 import { useSettingStore } from "./stores/useSettingStore";
 
 // Import the generated route tree
+import { useGlobalShortcuts } from "./hooks/useGlobalShortcuts";
 import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
@@ -17,16 +17,17 @@ declare module "@tanstack/react-router" {
   }
 }
 
-function App() {
+function AppRouter() {
+  useGlobalShortcuts();
   const darkMode = useSettingStore((state) => state.theme) === "vs-dark";
 
-  useEffect(() => {
-    document.addEventListener("keyup", bindGlobalKeyboardShortcuts);
+  // useEffect(() => {
+  //   document.addEventListener("keyup", bindGlobalKeyboardShortcuts);
 
-    return () => {
-      document.removeEventListener("keyup", bindGlobalKeyboardShortcuts);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("keyup", bindGlobalKeyboardShortcuts);
+  //   };
+  // }, []);
 
   return (
     <div
@@ -39,7 +40,7 @@ function App() {
   );
 }
 
-export default App;
+export default AppRouter;
 
 // import { appWindow } from "@tauri-apps/api/window";
 // // import GLOBAL_KEYBOARD_SHORTCUTS from "./constants/GLOBAL_SHORTCUTS";
@@ -64,43 +65,43 @@ export default App;
 // // }
 // // globalShortcut.unregisterAll();
 // // bindGlobalKeyboardShortcuts();
-const SHORTCUTS = [...GLOBAL_KEYBOARD_SHORTCUTS];
+// const SHORTCUTS = [...GLOBAL_KEYBOARD_SHORTCUTS];
 
-function bindGlobalKeyboardShortcuts(e: KeyboardEvent) {
-  const CTRL_KEY = e.ctrlKey || e.metaKey;
-  const SHIFT_KEY = e.shiftKey;
-  const ALT_KEY = e.altKey;
-  const KEY = e.key.toLowerCase(); // Normalize key to lowercase for comparison
+// function bindGlobalKeyboardShortcuts(e: KeyboardEvent) {
+//   const CTRL_KEY = e.ctrlKey || e.metaKey;
+//   const SHIFT_KEY = e.shiftKey;
+//   const ALT_KEY = e.altKey;
+//   const KEY = e.key.toLowerCase(); // Normalize key to lowercase for comparison
 
-  // Helper function to format the shortcut key string
-  const formatShortcut = () => {
-    let formattedShortcut = "";
-    if (CTRL_KEY) formattedShortcut += "CommandOrControl+";
-    if (ALT_KEY) formattedShortcut += "Alt+";
-    if (SHIFT_KEY) formattedShortcut += "Shift+";
-    formattedShortcut += KEY;
-    return formattedShortcut;
-  };
+//   // Helper function to format the shortcut key string
+//   const formatShortcut = () => {
+//     let formattedShortcut = "";
+//     if (CTRL_KEY) formattedShortcut += "CommandOrControl+";
+//     if (ALT_KEY) formattedShortcut += "Alt+";
+//     if (SHIFT_KEY) formattedShortcut += "Shift+";
+//     formattedShortcut += KEY;
+//     return formattedShortcut;
+//   };
 
-  const pressedShortcut = formatShortcut();
+//   const pressedShortcut = formatShortcut();
 
-  // console.debug({
-  //   CTRL_KEY,
-  //   SHIFT_KEY,
-  //   ALT_KEY,
-  //   KEY,
-  //   pressedShortcut,
-  // });
+//   // console.debug({
+//   //   CTRL_KEY,
+//   //   SHIFT_KEY,
+//   //   ALT_KEY,
+//   //   KEY,
+//   //   pressedShortcut,
+//   // });
 
-  // Loop through the defined global shortcuts and trigger the handler if a match is found
-  for (let { shortcut, handler } of GLOBAL_KEYBOARD_SHORTCUTS) {
-    if (shortcut.toLowerCase() === pressedShortcut.toLowerCase()) {
-      e.preventDefault(); // Prevent default action if the shortcut is matched
-      handler(); // Trigger the associated handler
-      return;
-    }
-  }
-}
+//   // Loop through the defined global shortcuts and trigger the handler if a match is found
+//   for (let { shortcut, handler } of GLOBAL_KEYBOARD_SHORTCUTS) {
+//     if (shortcut.toLowerCase() === pressedShortcut.toLowerCase()) {
+//       e.preventDefault(); // Prevent default action if the shortcut is matched
+//       handler(); // Trigger the associated handler
+//       return;
+//     }
+//   }
+// }
 
 // export default function App() {
 //   const activeRoute = useSettingStore((state) => state.activeRoute);

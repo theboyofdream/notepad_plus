@@ -5,19 +5,23 @@ type FileSystemStore = {
   files: IFile[],
   getFileById: fn<IFile | null, string>,
 
-  addNewFile: fn<IFile>,
+  addNewFile: () => void,
   renameFile: fn<void, { file: IFile, newName: string }>,
   closeFile: fn<boolean, IFile>,
   // saveFile: fn<boolean, IFile>,
-  // saveAsFile: fn<boolean, IFile>,
+  // saveFileAs: fn<boolean, IFile>,
+
+  focusedFile: IFile | undefined,
+  setFocusedFile: fn<void, IFile>
 
   openedFileHistory: IFile[],
   pushFileHistory: fn<void, IFile>,
   popFileHistory: fn<IFile | undefined>,
 
   autoSaveFile: boolean,
+  toggleAutoSaveFile: () => void,
   autoSaveFileDir: string,
-  toggleAutoSaveFile: fn
+  setAutoSaveFileDir: (dirPath: string) => void,
 
   cursorPosition: {
     line: number
@@ -72,7 +76,10 @@ export const useFileSystem = create<FileSystemStore>()((set, get) => ({
     return false
   },
   // saveFile() { },
-  // saveAsFile() { },
+  // saveFileAs() { },
+
+  focusedFile: undefined,
+  setFocusedFile: (file) => set(_ => ({ focusedFile: file })),
 
   openedFileHistory: [],
   pushFileHistory: (file) => set(state => ({ openedFileHistory: [...state.openedFileHistory, file] })),
@@ -84,8 +91,9 @@ export const useFileSystem = create<FileSystemStore>()((set, get) => ({
   },
 
   autoSaveFile: false,
-  autoSaveFileDir: fs.BaseDirectory.Document.toString(),
   toggleAutoSaveFile: () => set(state => ({ autoSaveFile: !state.autoSaveFile })),
+  autoSaveFileDir: fs.BaseDirectory.Document.toString(),
+  setAutoSaveFileDir: (dirPath) => set(_ => ({ autoSaveFileDir: dirPath })),
 
   cursorPosition: {
     line: 0,
@@ -93,3 +101,6 @@ export const useFileSystem = create<FileSystemStore>()((set, get) => ({
   },
   updateCursorPosition: (cursorPosition) => set(_ => ({ cursorPosition }))
 }))
+
+
+useFileSystem.getState().addNewFile()

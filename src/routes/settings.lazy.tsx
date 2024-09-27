@@ -1,9 +1,15 @@
+import { createLazyFileRoute } from "@tanstack/react-router";
+
 import { ChevronLeft, LucideFolderPen } from "lucide-react";
 import { Checkbox } from "../components/Checkbox";
 import { useFileSystem } from "../stores/useFileSystem";
 import { useSettingStore } from "../stores/useSettingStore";
 
-export function Settings() {
+export const Route = createLazyFileRoute("/settings")({
+  component: SettingsPage,
+});
+
+function SettingsPage() {
   const {
     wordWrap,
     toggleWordWrap,
@@ -15,7 +21,7 @@ export function Settings() {
   const {
     autoSaveFile,
     autoSaveFileDir,
-    setAutoSaveFileDir,
+    // setAutoSaveFileDir,
     toggleAutoSaveFile,
   } = useFileSystem();
   return (

@@ -2,23 +2,19 @@ import { appWindow } from "@tauri-apps/api/window";
 import { X } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { useEffect, useMemo, useRef } from "react";
-import { saveAsFile } from "../fs";
 import {
   closeActiveTab,
   createNewTab,
   gotoNextTab,
   gotoPreviousTab,
   toggleFullscreen,
-  toggleLineNumber,
-  toggleLineWrap,
-  toggleTabs,
   updateWindowTitle,
-} from "../keyShortcuts";
-import { debug } from "../lib/console";
-import { useNoteStore } from "../stores/useNoteStore";
-import { useSettingStore } from "../stores/useSettingStore";
-import { useSharedStore } from "../stores/useSharedStore";
-import { useFileSystem } from "../stores/useFileSystem";
+} from "../../keyShortcuts";
+import { debug } from "../../lib/console";
+import { useFileSystem } from "../../stores/useFileSystem";
+import { useNoteStore } from "../../stores/useNoteStore";
+import { useSettingStore } from "../../stores/useSettingStore";
+import { useSharedStore } from "../../stores/useSharedStore";
 
 export function Editor() {
   const zenMode = useSettingStore((state) => state.zenMode);
@@ -32,26 +28,17 @@ export function Editor() {
 }
 
 function NotepadEditor() {
-  // const {
-  //   activeNoteId,
-  //   showLineNumber,
-  //   wordWrap,
-  //   showTabs,
-  //   showFooter,
-  //   updateCursorPosition,
-  //   toggleAlwayOnTop,
-  // } = useSharedStore();
   const {
     zenMode,
     showLineNumber,
     wordWrap,
+    theme,
     toggleAlwaysOnTop,
     toggleLineNumber,
     toggleWordWrap,
     toggleZenMode,
   } = useSettingStore();
-  const { updateCursorPosition } = useFileSystem();
-  const { getNoteById } = useNoteStore();
+  const { focusedFile, updateCursorPosition } = useFileSystem();
 
   const editorRef = useRef<HTMLDivElement>(null);
   const monacoInstance = useRef<monaco.editor.IStandaloneCodeEditor | null>(
@@ -61,10 +48,11 @@ function NotepadEditor() {
   useEffect(() => {
     if (editorRef.current) {
       monacoInstance.current = monaco.editor.create(editorRef.current, {
-        value: "",
+        value:
+          "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Pariatur a excepturi magnam ea ad qui libero optio necessitatibus cum rerum corrupti architecto laborum neque placeat molestias exercitationem labore, velit error?",
         automaticLayout: true,
         language: "plaintext",
-        lineNumbers: showLineNumber ? "on" : "off",
+        lineNumbers: "off",
         largeFileOptimizations: true,
         glyphMargin: false,
         folding: false,
@@ -73,7 +61,7 @@ function NotepadEditor() {
           enabled: false,
         },
         theme: "vs-dark",
-        wordWrap: wordWrap ? "on" : "off",
+        wordWrap: "off",
         wrappingStrategy: "advanced",
         stickyScroll: {
           enabled: false,
@@ -82,19 +70,20 @@ function NotepadEditor() {
         maxTokenizationLineLength: 1000,
         // linkedEditing: true // rename on type
         scrollbar: {
-          vertical: "auto", // or 'auto', 'hidden'
-          horizontal: "auto", // or 'auto', 'hidden'
-          // vertical: "auto", // or 'auto', 'hidden'
-          // horizontal: "auto", // or 'auto', 'hidden'
-          verticalScrollbarSize: 6, // height of vertical scrollbar
-          horizontalScrollbarSize: 6, // width of horizontal scrollbar
-          arrowSize: 6, // size of scroll arrows
-          useShadows: false, // disables shadow effect
+          vertical: "auto",
+          horizontal: "auto",
+          verticalScrollbarSize: 6,
+          horizontalScrollbarSize: 6,
+          arrowSize: 6,
+          useShadows: false,
         },
       });
 
-      monacoInstance.current.onDidChangeCursorPosition((e) => {
-        updateCursorPosition(e.position.lineNumber, e.position.column);
+      monacoInstance.current.onDidChangeCursorPosition(({ position }) => {
+        updateCursorPosition({
+          line: position.lineNumber,
+          column: position.column,
+        });
       });
 
       // monacoInstance.current.onDidChangeCursorSelection(e => {
@@ -108,30 +97,41 @@ function NotepadEditor() {
       const F11 = monaco.KeyCode.F11;
       const t = monaco.KeyCode.KeyT;
       // const f = monaco.KeyCode.KeyF;
-      // const n = monaco.KeyCode.KeyN;
+      const n = monaco.KeyCode.KeyN;
       const w = monaco.KeyCode.KeyW;
-      const s = monaco.KeyCode.KeyS;
+      // const s = monaco.KeyCode.KeyS;
       const z = monaco.KeyCode.KeyZ;
       const x = monaco.KeyCode.KeyX;
       const m = monaco.KeyCode.KeyM;
       const COMMA = monaco.KeyCode.Comma;
 
-      // monacoInstance.current.addCommand(CTRLCMD | s, () => debug("save"));
-      monacoInstance.current.addCommand(CTRLCMD | s, saveAsFile);
-      monacoInstance.current.addCommand(CTRLCMD | SHIFT | s, () =>
-        debug("save as")
-      );
-      // monacoInstance.current.addCommand(CTRLCMD | n, () => debug("new window"));
-      monacoInstance.current.addCommand(ALT | z, toggleLineWrap);
+      // monacoInstance.current.executeCommand(null);
+      // monacoInstance.current.executeCommand(
+      //   null,
+      //   monaco.editor.
+      // );
+
+      // setTimeout(
+      //   () =>
+      //     monacoInstance.current?.trigger(
+      //       undefined,
+      //       "editor.action.selectAll",
+      //       null
+      //     ),
+      //   5000
+      // );
+
+      // monacoInstance.current.addCommand(CTRLCMD | s, saveFile);
+      // monacoInstance.current.addCommand(CTRLCMD | SHIFT | s, saveFileAs);
+      monacoInstance.current.addCommand(ALT | z, toggleWordWrap);
       monacoInstance.current.addCommand(ALT | x, toggleLineNumber);
-      // monacoInstance.current.addCommand(ALT | t, toggleTabs);
-      // monacoInstance.current.addCommand(ALT | f, toggleFooter);
-      monacoInstance.current.addCommand(CTRLCMD | SHIFT | m, toggleTabs);
-      // monacoInstance.current.addCommand(CTRLCMD | SHIFT | t, toggleAlwayOnTop);
+      monacoInstance.current.addCommand(CTRLCMD | SHIFT | m, toggleZenMode);
+      monacoInstance.current.addCommand(CTRLCMD | ALT | t, toggleAlwaysOnTop);
       monacoInstance.current.addCommand(CTRLCMD | COMMA, () =>
         debug("open settings")
       );
       monacoInstance.current.addCommand(CTRLCMD | t, createNewTab);
+      monacoInstance.current.addCommand(CTRLCMD | n, createNewTab);
       monacoInstance.current.addCommand(CTRLCMD | w, closeActiveTab);
       monacoInstance.current.addCommand(CTRLCMD | TAB, gotoNextTab);
       monacoInstance.current.addCommand(CTRLCMD | SHIFT | TAB, gotoPreviousTab);
@@ -145,38 +145,23 @@ function NotepadEditor() {
 
   // update editor content on tab change
   useEffect(() => {
-    if (!monacoInstance.current || !activeNoteId) return;
-    // debug(getNoteById(activeNoteId)?.content, activeNoteId);
-    const value = getNoteById(activeNoteId)?.content ?? "";
-    monacoInstance.current.setValue(value);
-    updateWindowTitle(getNoteById(activeNoteId)?.name ?? "notepad+");
-  }, [activeNoteId]);
+    if (!monacoInstance.current || !focusedFile?.id) {
+      return;
+    }
+    // monacoInstance.current.setValue(focusedFile.contents);
+    updateWindowTitle(focusedFile.name ?? "notepad+");
+  }, [focusedFile]);
 
-  // toggle line
+  // toggle line/word wrap
   useEffect(() => {
     monacoInstance.current?.updateOptions({
-      lineNumbers:
-        // monacoInstance.current.getOption(monaco.editor.EditorOption.lineNumbers)
-        //   .renderType === 0 // 0 means off
-        showLineNumber ? "on" : "off",
-      lineDecorationsWidth:
-        // monacoInstance.current?.getOption(
-        //   monaco.editor.EditorOption.lineDecorationsWidth
-        // ) == 0
-        showLineNumber ? undefined : 0,
+      lineNumbers: showLineNumber ? "on" : "off",
+      lineDecorationsWidth: showLineNumber ? undefined : 0,
+      wordWrap: wordWrap ? "on" : "off",
+      theme,
     });
-  }, [showLineNumber]);
-
-  // toggle line wrap
-  useEffect(() => {
-    monacoInstance.current?.updateOptions({
-      wordWrap,
-    });
-    // monacoInstance.current.getOption(
-    //   monaco.editor.EditorOption.wordWrap
-    // ) === "off"
-    // ? "on" : "off",
-  }, [wordWrap]);
+    debug({ theme });
+  }, [showLineNumber, wordWrap, theme]);
 
   function handleEditorRerender() {
     monacoInstance.current?.layout(
@@ -194,19 +179,19 @@ function NotepadEditor() {
 }
 
 function Header() {
-  const { activeNoteId, setActiveNoteId } = useSharedStore();
-  const { notes, removeNote } = useNoteStore();
+  const { files, focusedFile, setFocusedFile, closeFile } = useFileSystem();
+
   return (
     <div className="w-full">
       <div className={`flex flex-1 overflow-x-scroll w-full no-scrollbar`}>
-        {notes.map((note) => (
+        {files.map((file) => (
           <Tab
-            key={note.id}
-            name={note.name}
-            saved={note.saved}
-            active={note.id === activeNoteId}
-            onClick={() => setActiveNoteId(note.id)}
-            onClose={() => removeNote(note.id)}
+            key={file.id}
+            name={file.name}
+            saved={file.saved}
+            active={file.id === focusedFile?.id}
+            onClick={() => setFocusedFile(file)}
+            onClose={() => closeFile(file)}
           />
         ))}
       </div>
@@ -241,6 +226,7 @@ function Tab({ name, active, saved, onClick, onClose }: TabProps) {
 function Footer() {
   const { activeNoteId, cursorPosition } = useSharedStore();
   const { getNoteById } = useNoteStore();
+  const { theme, updateTheme } = useSettingStore();
 
   const { characterCount, wordCount, lineCount } = useMemo(() => {
     let noteContent = "";
@@ -252,6 +238,7 @@ function Footer() {
     const wordCount = noteContent.trim().split(/\s+/).length;
     const lineCount = noteContent.split("\n").length;
 
+    debug(theme);
     return {
       characterCount,
       wordCount,
@@ -278,7 +265,13 @@ function Footer() {
           }`}
         />
         <BottomTab name={`auto-save: off`} />
-        <BottomTab name={`theme: light`} />
+        <BottomTab
+          name={`theme: ${theme.replace("vs-", "")}`}
+          onClick={() => {
+            debug({ theme });
+            updateTheme(theme === "vs-dark" ? "vs-light" : "vs-dark");
+          }}
+        />
       </div>
     </div>
   );
@@ -290,11 +283,11 @@ type BottomTabProps = {
 };
 function BottomTab({ name, onClick }: BottomTabProps) {
   return (
-    <span
+    <button
       className={`flex min-w-fit items-end hover:bg-zinc-700 justify-between px-2 p-1 gap-1 text-slate-200 text-xs group cursor-pointer transition-all select-none`}
       onClick={onClick}
     >
       <span>{name}</span>
-    </span>
+    </button>
   );
 }

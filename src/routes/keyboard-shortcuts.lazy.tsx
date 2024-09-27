@@ -1,9 +1,14 @@
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   EDITOR_PRE_BUILT_SHORTCUTS,
   GLOBAL_KEYBOARD_SHORTCUTS,
 } from "../constants/keyboard-shortcuts";
+
+export const Route = createLazyFileRoute("/keyboard-shortcuts")({
+  component: KeyboardShortcutPage,
+});
 
 function prettierShortcut(shortcut: string) {
   let formattedShortcut = shortcut.replace(/\+/g, " + ");
@@ -14,7 +19,7 @@ function prettierShortcut(shortcut: string) {
 
 const SHORTCUTS = [...GLOBAL_KEYBOARD_SHORTCUTS, ...EDITOR_PRE_BUILT_SHORTCUTS];
 
-export function KeyboardShortcutPage() {
+function KeyboardShortcutPage() {
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const filteredShortcuts = useMemo(() => {

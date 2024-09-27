@@ -1,20 +1,25 @@
 import { create } from "zustand"
 
-type SettingStore = {
+type Route = 'editor' | 'settings' | 'keyboard-shortcuts'
+
+interface SettingStore {
   showLineNumber: boolean
-  toggleLineNumber: fn
+  toggleLineNumber: () => void
 
   wordWrap: boolean
-  toggleWordWrap: fn
+  toggleWordWrap: () => void
 
   zenMode: boolean
-  toggleZenMode: fn
+  toggleZenMode: () => void
 
   alwaysOnTop: boolean
-  toggleAlwaysOnTop: fn
+  toggleAlwaysOnTop: () => void
 
-  theme: string
-  updateTheme: fn<void, string>
+  theme: theme
+  updateTheme: (theme: theme) => void
+
+  activeRoute: Route
+  updateActiveRoute: (route: Route) => void
 }
 
 export const useSettingStore = create<SettingStore>()((set) => ({
@@ -31,5 +36,9 @@ export const useSettingStore = create<SettingStore>()((set) => ({
   toggleAlwaysOnTop: () => set(state => ({ alwaysOnTop: !state.alwaysOnTop })),
 
   theme: 'vs-dark',
-  updateTheme: (theme) => set(state => ({ theme }))
+  updateTheme: (theme) => set(_ => ({ theme })),
+
+  activeRoute: 'editor',
+  // activeRoute: "settings",
+  updateActiveRoute: (route) => set(_ => ({ activeRoute: route }))
 }))
