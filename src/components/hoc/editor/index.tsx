@@ -1,9 +1,9 @@
-import { useSettingStore } from "../../stores/useSettingStore";
-import { Footer } from "./Footer";
-import { Header } from "./Header";
-import { IEditor } from "./IEditor";
+import { useSettingStore } from "@/stores";
+import { IEditor } from "./editor";
+import { Footer } from "./footer";
+import { Header } from "./header";
 
-export default function EditorPage() {
+export function Editor() {
   const zenMode = useSettingStore((state) => state.zenMode);
 
   return (

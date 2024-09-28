@@ -1,4 +1,4 @@
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import "./App.css";
 // import { GLOBAL_KEYBOARD_SHORTCUTS } from "./constants/keyboard-shortcuts";
 import { useSettingStore } from "./stores/useSettingStore";
@@ -6,6 +6,17 @@ import { useSettingStore } from "./stores/useSettingStore";
 // Import the generated route tree
 import { useGlobalShortcuts } from "./hooks/useGlobalShortcuts";
 import { routeTree } from "./routeTree.gen";
+
+import {
+  restoreStateCurrent,
+  saveWindowState,
+  StateFlags,
+} from "@tauri-apps/plugin-window-state";
+// when using `"withGlobalTauri": true`, you may use
+// const { saveWindowState, StateFlags } = window.__TAURI_PLUGIN_WINDOW_STATE__;
+
+saveWindowState(StateFlags.ALL);
+restoreStateCurrent(StateFlags.ALL);
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -35,7 +46,10 @@ function AppRouter() {
         darkMode ? "dark" : ""
       } flex flex-col w-screen h-screen overflow-scroll bg-white dark:bg-neutral-800 text-black dark:text-white`}
     >
-      <RouterProvider router={router} />
+      <RouterProvider
+        router={router}
+        // defaultNotFoundComponent={ErrorPage}
+      />
     </div>
   );
 }

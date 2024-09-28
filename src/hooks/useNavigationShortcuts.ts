@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { NAVIGATION_SHORTCUTS } from "../constants/keyboard-shortcuts";
-import { extractKeys, formatShortcut } from "./helpers";
+import { extractKeys, formatShortcut } from "../helpers";
 
 export function useNavigationShortcuts() {
   const navigate = useNavigate();

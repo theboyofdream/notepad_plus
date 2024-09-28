@@ -18,7 +18,7 @@ import { Route as rootRoute } from './routes/__root'
 
 const SettingsLazyImport = createFileRoute('/settings')()
 const KeyboardShortcutsLazyImport = createFileRoute('/keyboard-shortcuts')()
-const editorIndexLazyImport = createFileRoute('/(editor)/')()
+const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
@@ -34,17 +34,22 @@ const KeyboardShortcutsLazyRoute = KeyboardShortcutsLazyImport.update({
   import('./routes/keyboard-shortcuts.lazy').then((d) => d.Route),
 )
 
-const editorIndexLazyRoute = editorIndexLazyImport
-  .update({
-    path: '/',
-    getParentRoute: () => roo./ routes / (editor) / index.lazy
-  } as any)
-  .lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const IndexLazyRoute = IndexLazyImport.update({
+  path: '/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/keyboard-shortcuts': {
       id: '/keyboard-shortcuts'
       path: '/keyboard-shortcuts'
@@ -59,56 +64,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsLazyImport
       parentRoute: typeof rootRoute
     }
-    '/(editor)/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof editorIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexLazyRoute
   '/keyboard-shortcuts': typeof KeyboardShortcutsLazyRoute
   '/settings': typeof SettingsLazyRoute
-  '/': typeof editorIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
+  '/': typeof IndexLazyRoute
   '/keyboard-shortcuts': typeof KeyboardShortcutsLazyRoute
   '/settings': typeof SettingsLazyRoute
-  '/': typeof editorIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
   '/keyboard-shortcuts': typeof KeyboardShortcutsLazyRoute
   '/settings': typeof SettingsLazyRoute
-  '/': typeof editorIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/keyboard-shortcuts' | '/settings' | '/'
+  fullPaths: '/' | '/keyboard-shortcuts' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/keyboard-shortcuts' | '/settings' | '/'
-  id: '__root__' | '/keyboard-shortcuts' | '/settings' | '/'
+  to: '/' | '/keyboard-shortcuts' | '/settings'
+  id: '__root__' | '/' | '/keyboard-shortcuts' | '/settings'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
+  IndexLazyRoute: typeof IndexLazyRoute
   KeyboardShortcutsLazyRoute: typeof KeyboardShortcutsLazyRoute
   SettingsLazyRoute: typeof SettingsLazyRoute
-  editorIndexLazyRoute: typeof editorIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexLazyRoute: IndexLazyRoute,
   KeyboardShortcutsLazyRoute: KeyboardShortcutsLazyRoute,
   SettingsLazyRoute: SettingsLazyRoute,
-  editorIndexLazyRoute: editorIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -123,19 +121,19 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/",
         "/keyboard-shortcuts",
-        "/settings",
-        "/"
+        "/settings"
       ]
+    },
+    "/": {
+      "filePath": "index.lazy.tsx"
     },
     "/keyboard-shortcuts": {
       "filePath": "keyboard-shortcuts.lazy.tsx"
     },
     "/settings": {
       "filePath": "settings.lazy.tsx"
-    },
-    "/": {
-      "filePath": "(editor)/index.lazy.tsx"
     }
   }
 }

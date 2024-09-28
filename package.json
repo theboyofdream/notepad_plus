@@ -10,6 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@bithero/monaco-editor-vite-plugin": "^1.0.2",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@tanstack/react-router": "^1.58.11",
@@ -17,21 +18,25 @@
     "autoprefixer": "^10.4.20",
     "lucide-react": "^0.441.0",
     "monaco-editor": "^0.51.0",
+    "path": "^0.12.7",
     "postcss": "^8.4.45",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.4.11",
     "uuid": "^10.0.0",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.58.11",
     "@tanstack/router-plugin": "^1.58.10",
-    "@tauri-apps/cli": "^1",
+    "@tauri-apps/cli": "^2.0.0-rc.16",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
-  }
+    "vite": "^5.3.1",
+    "@types/bun": "latest"
+  },
+  "module": "index.ts"
 }

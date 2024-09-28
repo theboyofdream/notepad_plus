@@ -1,31 +1,35 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { prettierShortcut } from "@/helpers";
+import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 import { ChevronLeft, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   EDITOR_PRE_BUILT_SHORTCUTS,
-  GLOBAL_KEYBOARD_SHORTCUTS,
+  GLOBAL_SHORTCUTS,
 } from "../constants/keyboard-shortcuts";
 
 export const Route = createLazyFileRoute("/keyboard-shortcuts")({
   component: KeyboardShortcutPage,
 });
 
-function prettierShortcut(shortcut: string) {
-  let formattedShortcut = shortcut.replace(/\+/g, " + ");
-  formattedShortcut = formattedShortcut.replace("CommandOrControl", "Cmd/Ctrl");
-
-  return formattedShortcut;
-}
-
-const SHORTCUTS = [...GLOBAL_KEYBOARD_SHORTCUTS, ...EDITOR_PRE_BUILT_SHORTCUTS];
+let SHORTCUTS = [...GLOBAL_SHORTCUTS, ...EDITOR_PRE_BUILT_SHORTCUTS];
 
 function KeyboardShortcutPage() {
+  const { history } = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const filteredShortcuts = useMemo(() => {
-    return SHORTCUTS.filter(
-      ({ shortcut, description }) =>
-        shortcut.includes(search) || description.includes(search)
+    const shortcuts = SHORTCUTS.map((shortcut) => {
+      return {
+        ...shortcut,
+        prettyShortcut: prettierShortcut(shortcut.shortcut),
+        description: shortcut.description.toLowerCase(),
+      };
+    });
+    return shortcuts.filter(
+      ({ shortcut, description, prettyShortcut }) =>
+        shortcut.toLowerCase().includes(search.toLowerCase()) ||
+        description.toLowerCase().includes(search.toLowerCase()) ||
+        prettyShortcut.toLowerCase().includes(search.toLowerCase())
     );
   }, [search]);
 
@@ -44,8 +48,13 @@ function KeyboardShortcutPage() {
   return (
     <div className="flex flex-col gap-4 p-2 px-3">
       <div className="flex gap-1 items-center">
-        <button className="hover p-1 rounded-full">
-          <ChevronLeft className="w-5 aspect-square" />
+        <button
+          className="hover p-1 rounded-full"
+          onClick={() => {
+            history.back();
+          }}
+        >
+          <ChevronLeft className="w-5 h-5 aspect-square" />
         </button>
         <span className="flex gap-2 items-baseline">
           <h1 className="text-2xl">Keyboard Shortcuts</h1>
@@ -55,7 +64,7 @@ function KeyboardShortcutPage() {
         </span>
       </div>
 
-      <div className="flex items-center rounded-md bg-zinc-700">
+      <div className="flex items-center rounded-md bg-neutral-200 dark:bg-neutral-700">
         <input
           ref={searchRef}
           type="text"
@@ -71,16 +80,21 @@ function KeyboardShortcutPage() {
 
       <table className="overflow-hidden rounded-md">
         <tbody>
-          {filteredShortcuts.map(({ shortcut, description }, index) => (
-            <tr key={shortcut} className={index % 2 === 0 ? "bg-zinc-700" : ""}>
-              <td className="p-1">
-                <kbd className="text-xs font-mono">
-                  {prettierShortcut(shortcut)}
-                </kbd>
-              </td>
-              <td>{description}</td>
-            </tr>
-          ))}
+          {filteredShortcuts.map(
+            ({ shortcut, prettyShortcut, description }, index) => (
+              <tr
+                key={shortcut}
+                className={
+                  index % 2 === 0 ? "bg-neutral-200 dark:bg-neutral-700" : ""
+                }
+              >
+                <td className="p-1">
+                  <kbd className="text-xs font-mono">{prettyShortcut}</kbd>
+                </td>
+                <td>{description}</td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </div>

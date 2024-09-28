@@ -1,9 +1,6 @@
+import { Editor } from "@/components";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useNavigationShortcuts } from "../hooks/useNavigationShortcuts";
-import { Footer } from "../pages/EditorPage/Footer";
-import { Header } from "../pages/EditorPage/Header";
-import { IEditor } from "../pages/EditorPage/IEditor";
-import { useSettingStore } from "../stores/useSettingStore";
 
 export const Route = createLazyFileRoute("/")({
   component: EditorPage,
@@ -12,15 +9,16 @@ export const Route = createLazyFileRoute("/")({
 function EditorPage() {
   useNavigationShortcuts();
 
-  const zenMode = useSettingStore((state) => state.zenMode);
+  return <Editor />;
+  // const zenMode = useSettingStore((state) => state.zenMode);
 
-  return (
-    <>
-      {!zenMode && <Header />}
-      <div className="flex-1 h-full w-full">
-        <IEditor />
-      </div>
-      {!zenMode && <Footer />}
-    </>
-  );
+  // return (
+  //   <>
+  //     {!zenMode && <Header />}
+  //     <div className="flex-1 h-full w-full">
+  //       <IEditor />
+  //     </div>
+  //     {!zenMode && <Footer />}
+  //   </>
+  // );
 }

@@ -1,0 +1,31 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main",
+    "create",
+    "edit",
+    "settings",
+    "about",
+    "help"
+  ],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "clipboard:allow-write-text",
+    "window:allow-create",
+    "window:allow-set-title",
+    "window:allow-set-always-on-top",
+    "window:allow-set-fullscreen",
+    "dialog:allow-ask",
+    "dialog:allow-confirm",
+    "dialog:allow-message",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "globalShortcut:allow-all",
+    "fs:allow-read",
+    "fs:allow-write",
+    "window:allow-file-drop"
+  ]
+}

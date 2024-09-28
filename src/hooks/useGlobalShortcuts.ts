@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { GLOBAL_SHORTCUTS } from "../constants/keyboard-shortcuts";
-import { extractKeys, formatShortcut } from "./helpers";
+import { extractKeys, formatShortcut } from "../helpers";
 
 export function useGlobalShortcuts() {
 

@@ -24,3 +24,9 @@ export function formatShortcut({ CTRL_KEY, SHIFT_KEY, ALT_KEY, KEY }: FormatShor
   return formattedShortcut.toLowerCase();
 }
 
+export function prettierShortcut(shortcut: string) {
+  let formattedShortcut = shortcut.replace(/\+/g, " + ");
+  formattedShortcut = formattedShortcut.replace("CommandOrControl", "Cmd/Ctrl");
+
+  return formattedShortcut;
+}

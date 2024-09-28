@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 
 import { ChevronLeft, LucideFolderPen } from "lucide-react";
 import { Checkbox } from "../components/Checkbox";
@@ -10,6 +10,7 @@ export const Route = createLazyFileRoute("/settings")({
 });
 
 function SettingsPage() {
+  const { history } = useRouter();
   const {
     wordWrap,
     toggleWordWrap,
@@ -27,8 +28,11 @@ function SettingsPage() {
   return (
     <div className="flex flex-col gap-4 p-2 px-3">
       <div className="flex gap-1 items-center">
-        <button className="hover p-1 rounded-full">
-          <ChevronLeft className="w-5 aspect-square" />
+        <button
+          className="hover p-1 rounded-full"
+          onClick={() => history.back()}
+        >
+          <ChevronLeft className="w-5 h-5 aspect-square" />
         </button>
         <h1 className="text-2xl">Settings</h1>
       </div>
