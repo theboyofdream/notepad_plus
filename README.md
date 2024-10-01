@@ -4,8 +4,6 @@ _Current version: aplha-0.0.1_
 
 Windows Notepad alternative. With basic text editing shortcuts. Picked from vsCode for users who like to use keyboard shortcuts.
 
-## Screenshots
-
 ## Features
 
 - basic notepad features

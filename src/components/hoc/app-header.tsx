@@ -128,7 +128,12 @@ export function AppHeader() {
             <Square className="w-3.5 h-3.5" />
           )}
         </button>
-        <button className="p-1 pl-2 py-1 flex items-center justify-center outline-none hover:bg-red-500">
+        <button
+          className="p-1 pl-2 py-1 flex items-center justify-center outline-none hover:bg-red-500"
+          onClick={() => {
+            tauriWindow.close();
+          }}
+        >
           <X className="w-4 h-4 -translate-x-1" />
         </button>
       </span>
