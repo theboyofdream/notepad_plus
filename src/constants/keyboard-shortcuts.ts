@@ -1,5 +1,5 @@
 import { monaco, tauriWindow } from "@/services";
-import { useAppMenu, useFileSystem, useSettingStore } from "@/stores";
+import { useFileSystem, useSettingStore } from "@/stores";
 
 export const NAVIGATION_SHORTCUTS = [
   {
@@ -58,17 +58,17 @@ export const GLOBAL_SHORTCUTS = [
       console.debug("Open file");
     }
   },
-  {
-    // keys: CTRL_CMD | o,
-    shortcut: "Alt+f",
-    description: "Open menu",
-    async handler() {
-      useAppMenu.getState().open()
-      // await useFileSystem.getState().openFile()
-      // console.warn('pending implementation')
-      console.debug("Open menu");
-    }
-  },
+  // {
+  //   // keys: CTRL_CMD | o,
+  //   shortcut: "Alt+f",
+  //   description: "Open menu",
+  //   async handler() {
+  //     // useContextMenu.getState().setOpenedMenu({
+  //     //   menuName: "app-menu",
+  //     // });
+  //     // console.debug("Open menu");
+  //   }
+  // },
 ] as const;
 
 // editor key constants
