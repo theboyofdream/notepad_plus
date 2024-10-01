@@ -1,18 +1,19 @@
 import { useSettingStore } from "@/stores";
 import { IEditor } from "./editor";
-import { Footer } from "./footer";
-import { Header } from "./header";
+import { EditorFooter } from "./footer";
+import { EditorHeader } from "./header";
 
 export function Editor() {
   const zenMode = useSettingStore((state) => state.zenMode);
+  const hideEditorStats = useSettingStore((state) => state.hideEditorStats);
 
   return (
     <>
-      {!zenMode && <Header />}
+      {!zenMode && <EditorHeader />}
       <div className="flex-1 h-full w-full">
         <IEditor />
       </div>
-      {!zenMode && <Footer />}
+      {!zenMode && !hideEditorStats && <EditorFooter />}
     </>
   );
 }

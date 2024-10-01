@@ -30,3 +30,20 @@ export function prettierShortcut(shortcut: string) {
 
   return formattedShortcut;
 }
+
+const FILE_PATH_REGEX = /\/|\\/g;
+export function extractFileInfoFromPath(filePath: string) {
+  const lastItem = filePath.split(FILE_PATH_REGEX).pop();
+  let parts = lastItem?.split(".");
+  const extension = parts?.pop() ?? "";
+  const name = (parts?.join(".") ?? "").replace(/\n/g, "").trim();
+  return { name, extension };
+}
+
+
+export function isFile(path: string) {
+  const lastItem = path.split(FILE_PATH_REGEX).pop();
+  let parts = lastItem?.split(".");
+  const extension = parts?.pop() ?? "";
+  return extension.length > 0
+}

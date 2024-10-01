@@ -3,29 +3,31 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main",
-    "create",
-    "edit",
-    "settings",
-    "about",
-    "help"
+    "main"
   ],
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "clipboard:allow-write-text",
-    "window:allow-create",
-    "window:allow-set-title",
-    "window:allow-set-always-on-top",
-    "window:allow-set-fullscreen",
-    "dialog:allow-ask",
-    "dialog:allow-confirm",
-    "dialog:allow-message",
-    "dialog:allow-open",
-    "dialog:allow-save",
-    "globalShortcut:allow-all",
-    "fs:allow-read",
-    "fs:allow-write",
-    "window:allow-file-drop"
-  ]
+    "dialog:default",
+    "fs:default",
+    "fs:read-meta",
+    "fs:read-files",
+    "fs:write-files",
+    "core:window:allow-request-user-attention",
+    "core:window:allow-set-decorations",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-start-dragging",
+    "core:window:allow-theme",
+    "core:window:allow-set-always-on-top"
+  ],
+  "webview": {
+    "listen": [
+      "tauri://drag-drop",
+      "tauri://resize"
+    ]
+  }
 }

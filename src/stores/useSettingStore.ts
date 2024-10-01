@@ -1,6 +1,18 @@
+import { tauriWindow } from "@/services"
 import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 type Route = 'editor' | 'settings' | 'keyboard-shortcuts'
+
+type EditorStats = {
+  totalLines: boolean
+  totalWords: boolean
+  totalCharacters: boolean
+  autoSave: boolean
+  theme: boolean
+  cursorPosition: boolean
+}
+
 
 interface SettingStore {
   showLineNumber: boolean
@@ -20,25 +32,55 @@ interface SettingStore {
 
   activeRoute: Route
   updateActiveRoute: (route: Route) => void
+
+  editorStats: EditorStats
+  updateEditorStats: (stats: Partial<EditorStats>) => void
+
+  hideEditorStats: boolean
+  toggleHideEditorStats: () => void
 }
 
-export const useSettingStore = create<SettingStore>()((set) => ({
-  showLineNumber: false,
-  toggleLineNumber: () => set(state => ({ showLineNumber: !state.showLineNumber })),
+export const useSettingStore = create<SettingStore>()(
+  persist(
+    (set, get) => ({
+      showLineNumber: false,
+      toggleLineNumber: () => set(state => ({ showLineNumber: !state.showLineNumber })),
 
-  wordWrap: false,
-  toggleWordWrap: () => set(state => ({ wordWrap: !state.wordWrap })),
+      wordWrap: false,
+      toggleWordWrap: () => set(state => ({ wordWrap: !state.wordWrap })),
 
-  zenMode: false,
-  toggleZenMode: () => set(state => ({ zenMode: !state.zenMode })),
+      zenMode: false,
+      toggleZenMode: () => set(state => ({ zenMode: !state.zenMode })),
 
-  alwaysOnTop: false,
-  toggleAlwaysOnTop: () => set(state => ({ alwaysOnTop: !state.alwaysOnTop })),
+      alwaysOnTop: false,
+      toggleAlwaysOnTop: async () => {
+        await tauriWindow.setAlwaysOnTop(!get().alwaysOnTop)
+        set(state => ({ alwaysOnTop: !state.alwaysOnTop }))
+      },
 
-  theme: 'vs-dark',
-  updateTheme: (theme) => set(_ => ({ theme })),
+      theme: 'vs-dark',
+      updateTheme: (theme) => set(_ => ({ theme })),
 
-  activeRoute: 'editor',
-  // activeRoute: "settings",
-  updateActiveRoute: (route) => set(_ => ({ activeRoute: route }))
-}))
+      activeRoute: 'editor',
+      // activeRoute: "settings",
+      updateActiveRoute: (route) => set(_ => ({ activeRoute: route })),
+
+      editorStats: {
+        totalLines: true,
+        totalWords: true,
+        totalCharacters: true,
+        autoSave: true,
+        theme: true,
+        cursorPosition: true,
+      },
+      updateEditorStats: (stats) => set(state => ({ editorStats: { ...state.editorStats, ...stats } })),
+
+      hideEditorStats: false,
+      toggleHideEditorStats: () => set(state => ({ hideEditorStats: !state.hideEditorStats })),
+    }),
+    {
+      name: 'use-setting-store',
+      storage: createJSONStorage(() => localStorage)
+    }
+  )
+)

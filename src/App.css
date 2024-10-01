@@ -5,91 +5,8 @@
 * {
   margin: 0;
   padding: 0;
-}
-
-@layer base {
-  :root {
-    --background: 229 57% 100%;
-    --foreground: 229 63% 4%;
-    --muted: 229 12% 86%;
-    --muted-foreground: 229 10% 37%;
-    --popover: 0 0% 99%;
-    --popover-foreground: 229 63% 3%;
-    --card: 0 0% 99%;
-    --card-foreground: 229 63% 3%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --primary: 229 100% 62%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 229 20% 90%;
-    --secondary-foreground: 229 20% 30%;
-    --accent: 229 28% 85%;
-    --accent-foreground: 229 28% 25%;
-    --destructive: 3 100% 50%;
-    --destructive-foreground: 3 0% 100%;
-    --ring: 229 100% 62%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 229 41% 4%;
-    --foreground: 229 23% 99%;
-    --muted: 229 12% 14%;
-    --muted-foreground: 229 10% 63%;
-    --popover: 229 41% 5%;
-    --popover-foreground: 0 0% 100%;
-    --card: 229 41% 5%;
-    --card-foreground: 0 0% 100%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --primary: 229 100% 62%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 229 14% 8%;
-    --secondary-foreground: 229 14% 68%;
-    --accent: 229 23% 17%;
-    --accent-foreground: 229 23% 77%;
-    --destructive: 3 89% 54%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 229 100% 62%;
-  }
-}
-
-@layer utilities {
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-  }
-
-  .scrollbar {
-    @apply mr-1
-  }
-
-  .scrollbar::-webkit-scrollbar {
-    @apply w-1.5 h-1.5 cursor-pointer;
-    /* [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:mr-2 [&::-webkit-scrollbar-thumb]:hover:cursor-pointer [&::-webkit-scrollbar-thumb]:hover:bg-zinc-600; */
-    /* @apply [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:hover:w-4 [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:mr-2 [&::-webkit-scrollbar-thumb]:hover:cursor-pointer [&::-webkit-scrollbar-thumb]:hover:bg-zinc-600; */
-  }
-
-  /* .scrollbar::-webkit-scrollbar:hover {
-    @apply w-3
-  } */
-
-  .scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-zinc-600 rounded cursor-pointer
-  }
-
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-zinc-500
-  }
+  color: inherit;
+  @apply bg-transparent;
 }
 
 /* Hide scrollbars for WebKit browsers (Chrome, Safari, etc.) */
@@ -115,41 +32,52 @@ body * .dark {
   @apply bg-neutral-800 text-white;
 }
 
-/* .hover {
-  @apply bg-neutral-300;
+/* scrollbar */
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.dark * .hover {
-  @apply bg-neutral-700;
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar {
+  @apply mr-1
+}
+
+.scrollbar::-webkit-scrollbar {
+  @apply w-1.5 h-1.5 cursor-pointer;
+  /* [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:mr-2 [&::-webkit-scrollbar-thumb]:hover:cursor-pointer [&::-webkit-scrollbar-thumb]:hover:bg-zinc-600; */
+  /* @apply [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:hover:w-4 [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:mr-2 [&::-webkit-scrollbar-thumb]:hover:cursor-pointer [&::-webkit-scrollbar-thumb]:hover:bg-zinc-600; */
+}
+
+/* .scrollbar::-webkit-scrollbar:hover {
+  @apply w-3
 } */
+
+.scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-zinc-600 rounded cursor-pointer
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-zinc-500
+}
+
+/*  */
 
 .hover {
   @apply bg-white dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700;
 }
 
 .active {
-  @apply bg-neutral-200 dark:bg-neutral-700;
+  @apply bg-neutral-200 dark:bg-neutral-700/50;
 }
 
-* {
-  color: inherit;
-  @apply bg-transparent;
-  /* @apply bg-white dark:bg-neutral-800 text-black dark:text-white; */
-}
-
-/* .monaco-scrollable-element::-webkit-scrollbar {
-  width: 12px !important;
-  height: 12px !important;
-}
-
-.monaco-scrollable-element::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 100px !important;
-}
-
-.monaco-scrollable-element::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-} */
 
 /* Scroll Bar */
 .slider {
@@ -173,150 +101,43 @@ body * .dark {
   height: 6px !important;
 }
 
-/* .icon {
-  @apply w-1 aspect-square;
-} */
-
-/* .scrollbar::-webkit-scrollbar {
-  margin: 0;
-  padding: 0;
-  margin-right: 1rem !important;
-
-  width: 0.25rem;
-
-  cursor: pointer;
+/* button */
+.btn {
+  @apply py-[0.2rem] px-3 rounded-lg cursor-pointer text-sm outline-none border-none;
 }
 
-.scrollbar::-webkit-scrollbar-track:hover {
-  width: 1rem !important;
+.btn.primary {
+  @apply bg-neutral-800 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-800;
 }
 
-.scrollbar::-webkit-scrollbar:hover {
-  width: 0.5rem !important;
+.btn.ghost {
+  @apply hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors
 }
 
-.scrollbar::-webkit-scrollbar-thumb {
-  width: 100%;
-  margin-right: 1rem !important;
-  border-radius: 100px !important;
-  background-color: white;
-} */
-
-/* [&::-webkit-scrollbar-track]:bg-gray-100 */
-
-/* .logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+/*  */
+.disabled {
+  opacity: 0.6;
 }
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+/* window header */
+.window-icon {
+  @apply w-5 h-5
 }
 
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
 
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
+@keyframes width-increase {
+  0% {
+    width: 0 !important;
   }
 
-  a:hover {
-    color: #24c8db;
+  100% {
+    width: 100% !important;
   }
+}
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+/* .animate-width {
+  animation-name: width-increase;
+  animation-timing-function: linear;
+  animation-duration: var(--duration);
 } */

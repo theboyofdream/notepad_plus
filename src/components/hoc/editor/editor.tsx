@@ -1,37 +1,27 @@
 import { EDITOR_SHORTCUTS } from "@/constants/keyboard-shortcuts";
+import { tauriWindow } from "@/services";
 import { useFileSystem, useSettingStore } from "@/stores";
-import { appWindow } from "@tauri-apps/api/window";
 import * as monaco from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
-
-console.clear();
-
-// Setting up the worker environment for plain text
-// window.MonacoEnvironment = {
-//   getWorkerUrl: function (workerId, label) {
-//     if (label === "plaintext") {
-//       return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
-//         self.MonacoEnvironment = {
-//           baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/'
-//         };
-//         importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/base/worker/workerMain.js');
-//       `)}`;
-//     }
-//     return "";
-//   },
-// };
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export function IEditor() {
-  const { zenMode, showLineNumber, wordWrap, theme } = useSettingStore();
+  const { zenMode, showLineNumber, wordWrap, theme, hideEditorStats } =
+    useSettingStore();
   const {
+    files,
     focusedFileId,
     updateCursorPosition,
     updateFileContents,
     getFileById,
+    renameFile,
   } = useFileSystem();
 
+  const file = useMemo(() => {
+    if (focusedFileId) return getFileById(focusedFileId);
+  }, [focusedFileId, files]);
+
   const editorContainer = useRef<HTMLDivElement>(null);
-  const [editorValue, setEditorValue] = useState("");
+  const [editorValue, setEditorValue] = useState(file?.contents ?? "");
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor | null>(
     null
   );
@@ -50,6 +40,7 @@ export function IEditor() {
         minimap: {
           enabled: false,
         },
+        tabFocusMode: true,
         theme: "vs-dark",
         wordWrap: "off",
         wrappingStrategy: "advanced",
@@ -67,6 +58,7 @@ export function IEditor() {
           arrowSize: 6,
           useShadows: false,
         },
+        contextmenu: false,
       });
 
       // Listen to cursor position changes
@@ -75,11 +67,18 @@ export function IEditor() {
           line: position.lineNumber,
           column: position.column,
         });
+        updateFileContents({
+          id: focusedFileId,
+          contents: editorInstance.current?.getValue() ?? "",
+          saved: file?.contents === editorValue ? file?.saved : false,
+        });
+        editorInstance.current?.saveViewState();
       });
 
       // Listen to value changes
       editorInstance.current.onDidChangeModelContent(() => {
         setEditorValue(editorInstance.current?.getValue() ?? "");
+        editorInstance.current?.saveViewState();
       });
 
       // monacoInstance.current.on
@@ -91,36 +90,7 @@ export function IEditor() {
         editorInstance.current.addCommand(keys, handler);
       }
 
-      // const CTRLCMD = monaco.KeyMod.CtrlCmd;
-      // const SHIFT = monaco.KeyMod.Shift;
-      // const ALT = monaco.KeyMod.Alt;
-      // const TAB = monaco.KeyCode.Tab;
-      // const F11 = monaco.KeyCode.F11;
-      // const t = monaco.KeyCode.KeyT;
-      // // const f = monaco.KeyCode.KeyF;
-      // const n = monaco.KeyCode.KeyN;
-      // const w = monaco.KeyCode.KeyW;
-      // // const s = monaco.KeyCode.KeyS;
-      // const z = monaco.KeyCode.KeyZ;
-      // const x = monaco.KeyCode.KeyX;
-      // const m = monaco.KeyCode.KeyM;
-      // // const COMMA = monaco.KeyCode.Comma;
-
-      // // monacoInstance.current.addCommand(CTRLCMD | s, saveFile);
-      // // monacoInstance.current.addCommand(CTRLCMD | SHIFT | s, saveFileAs);
-      // monacoInstance.current.addCommand(ALT | z, toggleWordWrap);
-      // monacoInstance.current.addCommand(ALT | x, toggleLineNumber);
-      // monacoInstance.current.addCommand(CTRLCMD | SHIFT | m, toggleZenMode);
-      // monacoInstance.current.addCommand(CTRLCMD | ALT | t, toggleAlwaysOnTop);
-      // // monacoInstance.current.addCommand(CTRLCMD | COMMA, () => {
-      // //   debug("open settings");
-      // // });
-      // monacoInstance.current.addCommand(CTRLCMD | t, createNewTab);
-      // monacoInstance.current.addCommand(CTRLCMD | n, createNewTab);
-      // monacoInstance.current.addCommand(CTRLCMD | w, closeActiveTab);
-      // monacoInstance.current.addCommand(CTRLCMD | TAB, gotoNextTab);
-      // monacoInstance.current.addCommand(CTRLCMD | SHIFT | TAB, gotoPreviousTab);
-      // monacoInstance.current.addCommand(F11, toggleFullscreen);
+      editorInstance.current.focus();
     }
 
     return () => editorInstance.current?.dispose();
@@ -131,7 +101,32 @@ export function IEditor() {
       updateFileContents({
         id: focusedFileId,
         contents: editorValue,
+        saved: file?.contents === editorValue ? file?.saved : false,
+        // contents: file?.contents ?? "",
+        // saved: file?.contents === editorValue ? file?.saved : false,
       });
+
+      // const file = getFileById(focusedFileId);
+      if (file && file.path.length <= 0 && !file.saved) {
+        let fileName = "Untitled";
+        for (let line of editorValue.split("\n")) {
+          line = line.trim();
+          if (line.length > 0) {
+            fileName = line.slice(0, 50);
+            break;
+          }
+        }
+
+        // let fileName = editorValue.split("\n")[0];
+        // if (fileName.length <= 0) {
+        //   fileName = "Untitled";
+        // }
+
+        renameFile({
+          id: focusedFileId,
+          newName: fileName,
+        });
+      }
     }
   }, [editorValue]);
 
@@ -139,7 +134,8 @@ export function IEditor() {
   useEffect(() => {
     if (!focusedFileId) return;
 
-    const newValue = getFileById(focusedFileId)?.contents || "";
+    // const newValue = getFileById(focusedFileId)?.contents || "";
+    const newValue = file?.contents || "";
     setEditorValue(newValue);
 
     if (editorInstance.current) {
@@ -148,7 +144,6 @@ export function IEditor() {
         editorInstance.setValue(newValue); // Update editor value
       }
     }
-    // // updateWindowTitle(focusedFile.name ?? "notepad+");
   }, [focusedFileId]);
 
   // toggle line/word wrap
@@ -165,9 +160,10 @@ export function IEditor() {
   function handleEditorRerender() {
     // console.debug("rerender", { zenMode });
     editorInstance.current?.layout({ height: 100, width: 100 }, true);
+    editorInstance.current?.layout(undefined, false);
   }
-  useEffect(handleEditorRerender, [zenMode]);
-  appWindow.onResized(handleEditorRerender);
+  useEffect(handleEditorRerender, [zenMode, hideEditorStats]);
+  tauriWindow.onResized(handleEditorRerender);
 
   return <div ref={editorContainer} className="min-h-full min-w-full" />;
 }

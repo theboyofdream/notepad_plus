@@ -1,7 +1,5 @@
-import { useFileSystem, useSettingStore } from "@/stores";
-import { dialog } from "@tauri-apps/api";
-import { appWindow } from "@tauri-apps/api/window";
-import * as monaco from 'monaco-editor';
+import { monaco, tauriWindow } from "@/services";
+import { useAppMenu, useFileSystem, useSettingStore } from "@/stores";
 
 export const NAVIGATION_SHORTCUTS = [
   {
@@ -21,9 +19,10 @@ export const GLOBAL_SHORTCUTS = [
     shortcut: "Shift+Alt+t",
     description: "Switch always on top mode",
     async handler() {
-      const { alwaysOnTop, toggleAlwaysOnTop } = useSettingStore.getState()
-      await appWindow.setAlwaysOnTop(!alwaysOnTop)
-      toggleAlwaysOnTop()
+      // const { alwaysOnTop, toggleAlwaysOnTop } = useSettingStore.getState()
+      // await tauriWindow.setAlwaysOnTop(!alwaysOnTop)
+      // toggleAlwaysOnTop()
+      useSettingStore.getState().toggleAlwaysOnTop()
       console.debug("Switch always on top mode");
     }
   },
@@ -41,14 +40,35 @@ export const GLOBAL_SHORTCUTS = [
     shortcut: "F11",
     description: "Toggle full screen mode",
     async handler() {
-      let isFullscreen = await appWindow.isFullscreen();
+      let isFullscreen = await tauriWindow.isFullscreen();
       console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
-      await appWindow.setFullscreen(!isFullscreen);
-      isFullscreen = await appWindow.isFullscreen();
+      await tauriWindow.setFullscreen(!isFullscreen);
+      isFullscreen = await tauriWindow.isFullscreen();
       console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
       console.debug("Toggle full screen mode");
     }
-  }
+  },
+  {
+    // keys: CTRL_CMD | o,
+    shortcut: "CommandOrControl+o",
+    description: "Open file",
+    async handler() {
+      await useFileSystem.getState().openFile()
+      // console.warn('pending implementation')
+      console.debug("Open file");
+    }
+  },
+  {
+    // keys: CTRL_CMD | o,
+    shortcut: "Alt+f",
+    description: "Open menu",
+    async handler() {
+      useAppMenu.getState().open()
+      // await useFileSystem.getState().openFile()
+      // console.warn('pending implementation')
+      console.debug("Open menu");
+    }
+  },
 ] as const;
 
 // editor key constants
@@ -64,7 +84,7 @@ const
   s = monaco.KeyCode.KeyS,
   z = monaco.KeyCode.KeyZ,
   x = monaco.KeyCode.KeyX,
-  o = monaco.KeyCode.KeyO,
+  // o = monaco.KeyCode.KeyO,
   m = monaco.KeyCode.KeyM;
 
 export const EDITOR_SHORTCUTS = [
@@ -73,8 +93,8 @@ export const EDITOR_SHORTCUTS = [
     shortcut: "CommandOrControl+s",
     description: "Save the current file",
     handler() {
-      // useFileSystem.getState().saveFile();
-      console.warn('pending implementation')
+      useFileSystem.getState().saveFile();
+      // console.warn('pending implementation')
       console.debug("Save the current file");
     }
   },
@@ -83,7 +103,8 @@ export const EDITOR_SHORTCUTS = [
     shortcut: "CommandOrControl+Shift+S",
     description: "Save the file as a new version",
     handler() {
-      console.warn('pending implementation')
+      useFileSystem.getState().saveFileAs()
+      // console.warn('pending implementation')
       console.debug("Save the file as a new version");
     }
   },
@@ -123,15 +144,16 @@ export const EDITOR_SHORTCUTS = [
       console.debug("Open a new tab");
     }
   },
-  {
-    keys: CTRL_CMD | o,
-    shortcut: "CommandOrControl+o",
-    description: "Open file",
-    handler() {
-      console.warn('pending implementation')
-      console.debug("Open file");
-    }
-  },
+  // {
+  //   keys: CTRL_CMD | o,
+  //   shortcut: "CommandOrControl+o",
+  //   description: "Open file",
+  //   handler() {
+  //     useFileSystem.getState().openFile()
+  //     // console.warn('pending implementation')
+  //     console.debug("Open file");
+  //   }
+  // },
   {
     keys: CTRL_CMD | n,
     shortcut: "CommandOrControl+n",
@@ -155,39 +177,41 @@ export const EDITOR_SHORTCUTS = [
     shortcut: "CommandOrControl+w",
     description: "Close the current tab",
     async handler() {
-      const { files, focusedFileId, closeFile, addNewFile, setFocusedFileId } = useFileSystem.getState()
-      if (!focusedFileId) return
+      useFileSystem.getState().closeFile()
+      // const { files, focusedFileId, closeFile, addNewFile, setFocusedFileId } = useFileSystem.getState()
+      // if (!focusedFileId) return
 
-      for (let i = 0; i < files.length; i++) {
-        if (files[i].id !== focusedFileId) continue
+      // for (let i = 0; i < files.length; i++) {
+      //   if (files[i].id !== focusedFileId) continue
 
-        if (!files[i].saved) {
-          const save = await dialog.confirm(
-            `Do you want to save changes to ${files[i].name}.${files[i].extension}`,
-            {
-              title: 'Unsaved changes',
-              type: "warning"
-            }
-          )
-          if (save) {
-            // useFileSystem.getState().saveFile()
-            console.warn('pending implementation')
-          }
-        }
+      //   if (!files[i].saved && files[i].contents.length > 0) {
+      //     const save = await dialog.confirm(
+      //       `Do you want to save changes to ${files[i].name}.${files[i].extension}`,
+      //       {
+      //         title: 'Unsaved changes',
+      //         kind: "warning"
+      //       }
+      //     )
+      //     if (save) {
 
-        closeFile(files[i])
+      //       // useFileSystem.getState().saveFile()
+      //       console.warn('pending implementation')
+      //     }
+      //   }
 
-        if (i === 0 && files.length === 1) {
-          addNewFile()
-        } else if (i === 0 && files.length > 1) {
-          setFocusedFileId(files[i + 1].id)
-        } else if (i === files.length - 1) {
-          setFocusedFileId(files[i - 1].id)
-        }
-        break
-      }
+      //   closeFile(files[i])
 
-      console.debug("Close the current tab");
+      //   if (i === 0 && files.length === 1) {
+      //     addNewFile()
+      //   } else if (i === 0 && files.length > 1) {
+      //     setFocusedFileId(files[i + 1].id)
+      //   } else if (i === files.length - 1) {
+      //     setFocusedFileId(files[i - 1].id)
+      //   }
+      //   break
+      // }
+
+      // console.debug("Close the current tab");
     }
   },
   {
@@ -246,44 +270,3 @@ export const EDITOR_PRE_BUILT_SHORTCUTS = [
     description: "Paste the line if no text selected",
   }
 ] as const;
-
-// export const GLOBAL_KEYBOARD_SHORTCUTS = [
-
-
-//   // {
-//   //   shortcut: "CommandOrControl+,",
-//   //   description: "Open/close settings",
-//   //   navigation: true,
-//   //   handler() {
-//   //     // redirect({ to: "/settings" });
-//   //     // useSettingStore.getState().updateActiveRoute(
-//   //     //   useSettingStore.getState().activeRoute === "settings"
-//   //     //     ? "editor"
-//   //     //     : "settings"
-//   //     // );
-//   //     console.debug("Open/close settings");
-//   //   }
-//   // },
-//   // {
-//   //   shortcut: "CommandOrControl+/",
-//   //   description: "Show/hide keyboard shortcuts",
-//   //   navigation: true,
-//   //   handler() {
-//   //     // useSettingStore.getState().updateActiveRoute(
-//   //     //   useSettingStore.getState().activeRoute === "keyboard-shortcuts"
-//   //     //     ? "editor"
-//   //     //     : "keyboard-shortcuts"
-//   //     // );
-//   //     console.debug("Show/hide keyboard shortcuts");
-//   //   }
-//   // },
-
-
-// ] as const;
-
-// export const EDITOR_PRE_BUILT_SHORTCUTS = [
-//   // {
-//   //   shortcut: "CommandOrControl+Alt+t",
-//   //   description: "Switch always on top mode",
-//   // }
-// ] as const

@@ -1,19 +1,28 @@
+import {
+  EDITOR_PRE_BUILT_SHORTCUTS,
+  EDITOR_SHORTCUTS,
+  GLOBAL_SHORTCUTS,
+  NAVIGATION_SHORTCUTS,
+} from "@/constants";
 import { prettierShortcut } from "@/helpers";
+import { useGlobalShortcuts } from "@/hooks";
 import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 import { ChevronLeft, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  EDITOR_PRE_BUILT_SHORTCUTS,
-  GLOBAL_SHORTCUTS,
-} from "../constants/keyboard-shortcuts";
 
 export const Route = createLazyFileRoute("/keyboard-shortcuts")({
   component: KeyboardShortcutPage,
 });
 
-let SHORTCUTS = [...GLOBAL_SHORTCUTS, ...EDITOR_PRE_BUILT_SHORTCUTS];
+let SHORTCUTS = [
+  ...GLOBAL_SHORTCUTS,
+  ...EDITOR_SHORTCUTS,
+  ...EDITOR_PRE_BUILT_SHORTCUTS,
+  ...NAVIGATION_SHORTCUTS,
+];
 
 function KeyboardShortcutPage() {
+  useGlobalShortcuts();
   const { history } = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
@@ -46,7 +55,7 @@ function KeyboardShortcutPage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 p-2 px-3">
+    <div className="flex flex-col min-w-[400px] overflow-scroll gap-3 p-2 px-3">
       <div className="flex gap-1 items-center">
         <button
           className="hover p-1 rounded-full"
@@ -54,49 +63,60 @@ function KeyboardShortcutPage() {
             history.back();
           }}
         >
-          <ChevronLeft className="w-5 h-5 aspect-square" />
+          <ChevronLeft className="w-4 h-4 aspect-square" />
         </button>
-        <span className="flex gap-2 items-baseline">
-          <h1 className="text-2xl">Keyboard Shortcuts</h1>
-          <span className="text-sm text-zinc-400">
-            {SHORTCUTS.length} shortcuts
-          </span>
-        </span>
+        <h1 className="text-md">Keyboard Shortcuts</h1>
       </div>
 
-      <div className="flex items-center rounded-md bg-neutral-200 dark:bg-neutral-700">
-        <input
-          ref={searchRef}
-          type="text"
-          placeholder="Press '/' to search"
-          className="p-1 pl-2 bg-transparent flex-1 border-none outline-none"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Search
-          className="w-4 h-4 mr-2 cursor-pointer"
-          onClick={() => searchRef.current?.focus()}
-        />
+      <div className="flex w-full">
+        <div className="flex flex-col gap-4 min-w-[400px] w-full max-w-xl">
+          <div>
+            <div className="flex items-center rounded-md bg-neutral-300/60 dark:bg-neutral-700/60">
+              <input
+                ref={searchRef}
+                type="text"
+                placeholder="Press '/' to search"
+                className="p-1 pl-1.5 bg-transparent flex-1 border-none outline-none text-sm"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <Search
+                className="w-4 h-4 mr-2 cursor-pointer"
+                onClick={() => searchRef.current?.focus()}
+              />
+            </div>
+            <span className="pl-1 text-xs text-zinc-400">
+              {SHORTCUTS.length} Shortcuts
+            </span>
+          </div>
+          <div className="overflow-hidden rounded-lg shadow border border-neutral-400/50 dark:border-neutral-700/50">
+            <table className="w-full">
+              <tbody>
+                {filteredShortcuts.map(
+                  ({ shortcut, prettyShortcut, description }, index) => (
+                    <tr
+                      key={shortcut}
+                      className={
+                        index % 2 === 0
+                          ? "bg-neutral-200 dark:bg-neutral-700/50"
+                          : ""
+                      }
+                    >
+                      <td className="p-0.5 px-1.5">
+                        <kbd className="text-xs font-mono">
+                          {prettyShortcut}
+                        </kbd>
+                      </td>
+                      <td className="text-sm first-letter:capitalize">
+                        {description}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-
-      <table className="overflow-hidden rounded-md">
-        <tbody>
-          {filteredShortcuts.map(
-            ({ shortcut, prettyShortcut, description }, index) => (
-              <tr
-                key={shortcut}
-                className={
-                  index % 2 === 0 ? "bg-neutral-200 dark:bg-neutral-700" : ""
-                }
-              >
-                <td className="p-1">
-                  <kbd className="text-xs font-mono">{prettyShortcut}</kbd>
-                </td>
-                <td>{description}</td>
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
     </div>
   );
 }
