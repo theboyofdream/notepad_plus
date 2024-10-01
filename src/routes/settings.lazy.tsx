@@ -87,6 +87,17 @@ function SettingsPage() {
           onChange={useSettingStore.getState().toggleZenMode}
           label="Zen mode"
         />
+
+        {/* <div>
+          <span>Font size</span>
+          <input
+            type="range"
+            min={12}
+            max={32}
+            // value={fontSize}
+            // onChange={handleFontSizeChange}
+          />
+        </div> */}
       </div>
     </div>
   );

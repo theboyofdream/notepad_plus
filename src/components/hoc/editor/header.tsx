@@ -113,7 +113,7 @@ export function EditorHeader() {
               <span className="w-[10px] my-0.5 bg-current opacity-30" />
             )} */}
             <span
-              className="flex-1"
+              className="flex flex-1"
               // ref={(elem) => {
               //   tabs.current[index] = elem;
               // }}

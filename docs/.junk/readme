@@ -1,0 +1,16 @@
+### Why I built Notepad+?
+
+I mostly use windows notepad to take notes. It's simple just press windows key type "no" hit enter. You are ready to go.
+
+As a developer i have a habit of using keyboard shortcuts while taking notes. In original notepad you can't do that. So as a lazy dev looked for alternative, but didn't find any alternatives that satisfy following conditions.
+
+- Somewhat similar interface to notepad.
+- Keyboard shortcuts.
+- Specially built for taking plain text notes.
+- Can auto save notes in selected folder (so i can take backup using megaSync/gdrive).
+- Cross platform
+- 100% local & free (without ads), no sign-in / telemetry / tracking.
+
+#### Why cross platform?
+
+Currently i use windows 10 & 11 both. But i am planning to hop onto linux distro. Because my laptop is old & started lagging. And finally sometime i also work on macos (company laptop whenever i can get access).

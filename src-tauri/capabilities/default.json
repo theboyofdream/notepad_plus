@@ -12,7 +12,9 @@
     "fs:default",
     "fs:read-meta",
     "fs:read-files",
+    "fs:allow-read-file",
     "fs:write-files",
+    "fs:allow-write-file",
     "core:window:allow-request-user-attention",
     "core:window:allow-set-decorations",
     "core:window:allow-close",
@@ -20,9 +22,9 @@
     "core:window:allow-maximize",
     "core:window:allow-is-fullscreen",
     "core:window:allow-set-fullscreen",
+    "core:window:allow-set-always-on-top",
     "core:window:allow-start-dragging",
-    "core:window:allow-theme",
-    "core:window:allow-set-always-on-top"
+    "core:window:allow-start-resize-dragging"
   ],
   "webview": {
     "listen": [

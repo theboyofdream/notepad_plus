@@ -1,7 +1,21 @@
-# Tauri + React + Typescript
+# Notepad+
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+_Current version: aplha-0.0.1_
 
-## Recommended IDE Setup
+Windows Notepad alternative. With basic text editing shortcuts. Picked from vsCode for users who like to use keyboard shortcuts.
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Screenshots
+
+## Features
+
+- basic notepad features
+- auto-save file in selected folder when CTRL+S pressed.
+- keyboard shortcuts for editing/navigating
+- drop file inside app to open
+
+## Readme files
+
+- [ROADMAP](./docs/ROADMAP.md)
+- [CONTRIBUTING](./CONTRIBUTING.md)
+- [CHANGE_LOGS](./CHANGE_LOGS.md)
+- [LICENSE](./LICENSE)

@@ -16,7 +16,7 @@ async function load() {
     let res = JSON.parse(await readTextFile(STORAGE_FILE_PATH, CONFIG));
     storage = typeof res === 'object' ? res : {};
   } catch (error) {
-    console.error('Failed to load data:', error);
+    console.debug('Failed to load data:', error);
   }
 }
 
@@ -25,7 +25,7 @@ async function save() {
   try {
     await writeTextFile(STORAGE_FILE_PATH, JSON.stringify(storage), CONFIG);
   } catch (error) {
-    console.error('Failed to save data:', error);
+    console.debug('Failed to save data:', error);
   }
 }
 

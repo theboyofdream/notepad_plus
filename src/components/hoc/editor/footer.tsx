@@ -76,7 +76,7 @@ export function EditorFooter() {
       ref={ref}
       className="flex justify-between overflow-hidden overflow-x-scroll no-scrollbar w-full h-5"
     >
-      <span>
+      <span className="flex">
         {editorStats.cursorPosition && (
           <BottomTab
             name={`line ${cursorPosition.line} col ${cursorPosition.column}`}

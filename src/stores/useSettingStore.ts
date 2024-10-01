@@ -30,6 +30,10 @@ interface SettingStore {
   theme: theme
   updateTheme: (theme: theme) => void
 
+  fullscreen: boolean
+  toggleFullscreen: () => void
+  setFullscreen: (fullscreen: boolean) => void
+
   activeRoute: Route
   updateActiveRoute: (route: Route) => void
 
@@ -61,8 +65,20 @@ export const useSettingStore = create<SettingStore>()(
       theme: 'vs-dark',
       updateTheme: (theme) => set(_ => ({ theme })),
 
+      fullscreen: false,
+      toggleFullscreen: async () => {
+        try {
+          const { fullscreen } = get()
+          await tauriWindow.setFullscreen(!fullscreen)
+          set(_ => ({ fullscreen: !fullscreen }))
+        } catch (error) {
+          console.debug("Failed to toggle fullscreen", error)
+          set(_ => ({ fullscreen: false }))
+        }
+      },
+      setFullscreen: (fullscreen) => set(_ => ({ fullscreen })),
+
       activeRoute: 'editor',
-      // activeRoute: "settings",
       updateActiveRoute: (route) => set(_ => ({ activeRoute: route })),
 
       editorStats: {

@@ -1,4 +1,4 @@
-import { monaco, tauriWindow } from "@/services";
+import { monaco } from "@/services";
 import { useFileSystem, useSettingStore } from "@/stores";
 
 export const NAVIGATION_SHORTCUTS = [
@@ -40,12 +40,13 @@ export const GLOBAL_SHORTCUTS = [
     shortcut: "F11",
     description: "Toggle full screen mode",
     async handler() {
-      let isFullscreen = await tauriWindow.isFullscreen();
-      console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
-      await tauriWindow.setFullscreen(!isFullscreen);
-      isFullscreen = await tauriWindow.isFullscreen();
-      console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
-      console.debug("Toggle full screen mode");
+      await useSettingStore.getState().toggleFullscreen()
+      // let isFullscreen = await tauriWindow.isFullscreen();
+      // console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
+      // await tauriWindow.setFullscreen(!isFullscreen);
+      // isFullscreen = await tauriWindow.isFullscreen();
+      // console.debug(`Fullscreen mode ${!isFullscreen ? 'enabled' : 'disabled'}`);
+      // console.debug("Toggle full screen mode");
     }
   },
   {

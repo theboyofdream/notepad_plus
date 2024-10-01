@@ -59,6 +59,9 @@ export function IEditor() {
           useShadows: false,
         },
         contextmenu: false,
+        // padding: {
+        //   left:5
+        // }
       });
 
       // Listen to cursor position changes
@@ -165,5 +168,10 @@ export function IEditor() {
   useEffect(handleEditorRerender, [zenMode, hideEditorStats]);
   tauriWindow.onResized(handleEditorRerender);
 
-  return <div ref={editorContainer} className="min-h-full min-w-full" />;
+  return (
+    <div
+      ref={editorContainer}
+      className=" transition-none min-h-full min-w-full"
+    />
+  );
 }

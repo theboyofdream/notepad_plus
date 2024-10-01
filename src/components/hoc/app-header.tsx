@@ -1,29 +1,9 @@
 import { tauriWindow } from "@/services";
-import { useContextMenu, useFileSystem } from "@/stores";
+import { useContextMenu, useFileSystem, useSettingStore } from "@/stores";
 import { useLocation } from "@tanstack/react-router";
-import { AlignLeft, Minus, Square, X } from "lucide-react";
-import { useState } from "react";
+import { AlignLeft, Minus, Pin, PinOff, Square, X } from "lucide-react";
 
 export function AppHeader() {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const handleFullscreen = async () => {
-    await tauriWindow.setFullscreen(!isFullscreen);
-    setIsFullscreen(!isFullscreen);
-  };
-
-  // tauriWindow.listen("tauri://resize", async () => {
-  //   // setIsFullscreen(await tauriWindow.isFullscreen());
-  //   setIsFullscreen(await tauriWindow.isFullscreen());
-  // });
-
-  // useEffect(() => {
-  //   // window.addEventListener("resize", async () => {
-  //   //   setIsFullscreen(!isFullscreen);
-  //   // });
-  //   // return () => {
-  //   //   window.removeEventListener("resize", () => {});
-  //   // };
-  // }, []);
   let { pathname } = useLocation();
   pathname = pathname.replace(/\//g, "");
   // console.log(pathname);
@@ -36,10 +16,33 @@ export function AppHeader() {
   const { focusedFileId, getFileById } = useFileSystem();
   const file = getFileById(focusedFileId ?? "");
 
+  const { fullscreen, toggleFullscreen, alwaysOnTop, toggleAlwaysOnTop } =
+    useSettingStore();
+
+  // tauriWindow.onResized((e) => {
+  //   const windowSize = e.payload;
+  //   window.currentMonitor().then((monitor) => {
+  //     // console.debug({ monitor });
+  //     const monitorSize = monitor?.size;
+  //     if (monitorSize) {
+  //       if (
+  //         windowSize.width === monitorSize.width &&
+  //         windowSize.height === monitorSize.height
+  //       ) {
+  //         useSettingStore.getState().setFullscreen(true);
+  //       }
+  //     }
+  //   });
+  // });
+
   return (
     <div
       className="flex w-full items-center justify-between"
       data-tauri-drag-region
+      onDoubleClick={() => {
+        toggleFullscreen();
+        // e.stopPropagation();
+      }}
     >
       {/* flex-1 */}
       <span className="flex items-center" data-tauri-drag-region>
@@ -59,8 +62,8 @@ export function AppHeader() {
         data-tauri-drag-region
         className="flex flex-1 items-center justify-center text-xs gap-1 select-none"
       >
-        <span>
-          <p className="line-clamp-1 text-center">
+        <span data-tauri-drag-region>
+          <p className="line-clamp-1 text-center" data-tauri-drag-region>
             {pathname.trim() == "" ? (
               <>
                 {file?.saved ? "" : "*"}
@@ -94,6 +97,16 @@ export function AppHeader() {
       {/*  flex-1 */}
       <span className="flex items-center justify-end" data-tauri-drag-region>
         <button
+          className="p-1 flex items-baseline hover outline-none justify-center"
+          onClick={toggleAlwaysOnTop}
+        >
+          {alwaysOnTop ? (
+            <PinOff className="w-3.5 h-3.5" />
+          ) : (
+            <Pin className="w-3.5 h-3.5" />
+          )}
+        </button>
+        <button
           className="p-1 flex items-baseline hover outline-none justify-center overflow-hidden"
           onClick={() => tauriWindow.minimize()}
         >
@@ -101,9 +114,9 @@ export function AppHeader() {
         </button>
         <button
           className="p-1 flex items-center outline-none justify-center hover"
-          onClick={handleFullscreen}
+          onClick={toggleFullscreen}
         >
-          {isFullscreen ? (
+          {fullscreen ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
